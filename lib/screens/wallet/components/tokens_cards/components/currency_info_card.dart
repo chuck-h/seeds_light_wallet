@@ -38,9 +38,14 @@ class CurrencyInfoCard extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: Text(
-                        tokenBalance.token.name,
-                        style: Theme.of(context).textTheme.headline7.copyWith(color: textColor),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(tokenBalance.token.name,
+                               style: Theme.of(context).textTheme.headline7.copyWith(color: textColor)),
+                          Text("["+tokenBalance.token.chainName+"] "+tokenBalance.token.contract,
+                               style: Theme.of(context).textTheme.subtitle2!.copyWith(color: textColor))
+                        ]
                       ),
                     ),
                     Container(
