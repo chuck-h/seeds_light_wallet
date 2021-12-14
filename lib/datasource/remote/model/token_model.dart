@@ -1,8 +1,14 @@
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:seeds/datasource/local/settings_storage.dart';
 
 class TokenModel extends Equatable {
-  static const allTokens = [seedsToken, husdToken, hyphaToken, localScaleToken, starsToken, telosToken];
+  static final Map<String, TokenModel> allTokens = { };
+
+  static const List<TokenModel> defaultTokens = [
+    seedsToken, telosToken,
+    husdToken, hyphaToken, localScaleToken, starsToken
+  ];
 
   final String chainName;
   final String contract;
@@ -15,6 +21,15 @@ class TokenModel extends Equatable {
 
   String get id => "$contract#$symbol";
 
+  static Future<void> initialize() async {
+    if(settingsStorage.allTokensList.isEmpty) {
+      for (final tm in defaultTokens) {
+        allTokens[tm.id] = tm;
+      }
+      settingsStorage.allTokensList = allTokens.values.toList();
+    }
+  }
+
   const TokenModel({
     required this.chainName,
     required this.contract,
@@ -26,12 +41,47 @@ class TokenModel extends Equatable {
     this.precision = 4,
   });
 
+
   factory TokenModel.fromSymbol(String symbol) {
-    return allTokens.firstWhere((e) => e.symbol == symbol);
+    return allTokens.values.firstWhere((e) => e.symbol == symbol);
   }
 
+  static const Map<String,dynamic> presetToken = {
+    'backgroundImage': 'assets/images/wallet/currency_info_cards/default/background.jpg',
+    'logo': 'assets/images/wallet/currency_info_cards/default/logo.jpg',
+    'balanceSubTitle': 'Wallet Balance'
+  };
+
+  factory TokenModel.fromJson(Map<String, dynamic> parsedJson) {
+    final String chainName = parsedJson['chainName'] ??
+        { throw Exception('token JSON: $parsedJson -> "chainName" is missing') };
+    final String contract = parsedJson['contract'] ??
+        { throw Exception('token JSON: $parsedJson -> "contract" is missing') };
+    final String symbol = parsedJson['symbol'] ??
+        { throw Exception('token JSON: $parsedJson -> "symbol" is missing') };
+    final String name = parsedJson['name'] ?? symbol;
+    final String backgroundImage = parsedJson['backgroundImage'] ?? presetToken['backgroundImage'];
+    final String logo = parsedJson['logo'] ?? presetToken['logo'];
+    final String balanceSubTitle = parsedJson['balanceSubTitle'] ?? presetToken['balanceSubTitle'];
+    final rv = TokenModel(chainName: chainName, contract: contract, symbol: symbol,
+        name: name, backgroundImage: backgroundImage, logo: logo, balanceSubTitle: balanceSubTitle);
+    allTokens[rv.id] = rv;
+    return rv;
+  }
+
+  Map<String, dynamic> toJson() => {
+    'chainName': chainName,
+    'contract': contract,
+    'symbol': symbol,
+    'name': name,
+    'backgroundImage': backgroundImage,
+    'logo': logo,
+    'balanceSubTitle': balanceSubTitle,
+    'precision': precision
+  };
+    
   static TokenModel? fromSymbolOrNull(String symbol) {
-    return allTokens.firstWhereOrNull((e) => e.symbol == symbol);
+    return allTokens.values.firstWhereOrNull((e) => e.symbol == symbol);
   }
 
   @override

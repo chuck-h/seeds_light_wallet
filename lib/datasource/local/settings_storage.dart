@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -22,6 +23,7 @@ const String _kSelectedToken = 'selected_token';
 const String _kInRecoveryMode = 'in_recovery_mode';
 const String _kRecoveryLink = 'recovery_link';
 const String _kTokensWhiteList = 'tokens_whitelist';
+const String _kAllTokens = 'all_tokens';
 const String _kIsCitizen = 'is_citizen';
 const String _kIsFirstRun = 'is_first_run';
 const String _kIsFirstTimeOnDelegateScreen = 'is_first_time_on_delegate_screen';
@@ -70,6 +72,14 @@ class _SettingsStorage {
   String get recoveryLink => _preferences.getString(_kRecoveryLink) ?? '';
 
   List<String> get tokensWhitelist => _preferences.getStringList(_kTokensWhiteList) ?? [seedsToken.id];
+
+  List<TokenModel> get allTokensList {
+    final Iterable parsedJson = json.decode(_preferences.getString(_kAllTokens) ?? '{ }' );
+    for (final m in parsedJson) {
+      TokenModel.fromJson(m as Map<String, dynamic>);
+    }
+    return TokenModel.allTokens.values.toList();
+  }
 
   bool get isCitizen => _preferences.getBool(_kIsCitizen) ?? false;
 
@@ -135,6 +145,10 @@ class _SettingsStorage {
 
   set tokensWhitelist(List<String> tokensList) {
     _preferences.setStringList(_kTokensWhiteList, tokensList);
+  }
+
+  set allTokensList(List<TokenModel> allTokensList) {
+    _preferences.setString(_kAllTokens, jsonEncode(allTokensList));
   }
 
   set isCitizen(bool? value) {

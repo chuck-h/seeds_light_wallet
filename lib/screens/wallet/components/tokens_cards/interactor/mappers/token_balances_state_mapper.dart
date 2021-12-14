@@ -16,7 +16,7 @@ class TokenBalancesStateMapper {
     final List<TokenBalanceViewModel> available = [];
 
     final Iterable<TokenModel> whitelist =
-        TokenModel.allTokens.where((element) => settingsStorage.tokensWhitelist.contains(element.id));
+        TokenModel.allTokens.values.where((element) => settingsStorage.tokensWhitelist.contains(element.id));
 
     final List<TokenModel> blacklist = []; // user has chosen to hide this token
 
