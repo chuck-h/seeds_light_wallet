@@ -32,16 +32,16 @@ class TokenModel extends Equatable {
 
   static TokenModel? fromJson(Map<String,dynamic> data) {
     if(data["approved"] != 0) {
-      // final Map<String,dynamic> parsedJson = json.decode(data["json"]);
+      final Map<String,dynamic> parsedJson = json.decode(data["json"]);
       return TokenModel(
           chainName: data["chainName"],
           contract: data["contract"],
           symbol: data["symbolcode"],
-          name: data["name"],
-          backgroundImage: data["backgroundImage"],
-          logo: data["logo"],
-          balanceSubTitle: data["balanceSubTitle"],
-          precision: data["precision"],
+          name: parsedJson["name"] ?? "NONAME",
+          backgroundImage: parsedJson["backgroundImage"] ?? "NOBACKGROUND",
+          logo: parsedJson["logo"] ?? "NOLOGO",
+          balanceSubTitle: parsedJson["balanceSubTitle"] ?? "NOSUBTITLE",
+          precision: parsedJson["precision"] ?? -1,
           jsonData: data["json"]
       );
     }
