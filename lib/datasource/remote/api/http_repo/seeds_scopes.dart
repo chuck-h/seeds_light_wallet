@@ -6,6 +6,7 @@ const String _accountGuards = 'guard.seeds';
 const String _accountHarvest = 'harvst.seeds';
 const String _accountJoin = 'join.seeds';
 const String _accountToken = 'token.seeds';
+const String _accountTokenModels = 'rainboissuer'; // 'modls.seeds';
 const String _accountRules = 'rules.seeds';
 const String _accountSettgs = 'settgs.seeds';
 const String _historySeeds = 'histry.seeds';
@@ -25,6 +26,7 @@ enum SeedsCode {
   accountHarvest,
   accountJoin,
   accountToken,
+  accountTokenModels,
   accountRules,
   accountSettgs,
   historySeeds,
@@ -54,6 +56,8 @@ extension SeedsCodeExtension on SeedsCode {
         return _accountJoin;
       case SeedsCode.accountToken:
         return _accountToken;
+      case SeedsCode.accountTokenModels:
+        return _accountTokenModels;
       case SeedsCode.accountRules:
         return _accountRules;
       case SeedsCode.accountSettgs:

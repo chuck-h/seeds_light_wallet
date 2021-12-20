@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:seeds/datasource/remote/api/tokenmodels_repository.dart';
 
 class TokenModel extends Equatable {
-  static const allTokens = [seedsToken, husdToken, hyphaToken, localScaleToken, starsToken, telosToken];
+  static List<TokenModel> allTokens = [seedsToken];
 
   final String chainName;
   final String contract;
@@ -12,6 +14,7 @@ class TokenModel extends Equatable {
   final String logo;
   final String balanceSubTitle;
   final int precision;
+  final String jsonData;
 
   String get id => "$contract#$symbol";
 
@@ -24,7 +27,25 @@ class TokenModel extends Equatable {
     required this.logo,
     required this.balanceSubTitle,
     this.precision = 4,
+    this.jsonData = "",
   });
+
+  static TokenModel? fromJson(Map<String,dynamic> data) {
+    if(data["approved"] != 0) {
+      // final Map<String,dynamic> parsedJson = json.decode(data["json"]);
+      return TokenModel(
+          chainName: data["chainName"],
+          contract: data["contract"],
+          symbol: data["symbolcode"],
+          name: data["name"],
+          backgroundImage: data["backgroundImage"],
+          logo: data["logo"],
+          balanceSubTitle: data["balanceSubTitle"],
+          precision: data["precision"],
+          jsonData: data["json"]
+      );
+    }
+  }
 
   factory TokenModel.fromSymbol(String symbol) {
     return allTokens.firstWhere((e) => e.symbol == symbol);
@@ -39,6 +60,16 @@ class TokenModel extends Equatable {
 
   String getAssetString(double quantity) {
     return "${quantity.toStringAsFixed(precision)} $symbol";
+  }
+
+  static Future<void> initialise() async {
+    await TokenModelsRepository().getTokenModels("lightwallet").then((models){
+      if(models.isValue) {
+        allTokens.addAll(models.asValue!.value);
+      } else {
+        // handle errors, how?
+      }
+    });
   }
 }
 
