@@ -19,16 +19,16 @@ class TokenModel extends Equatable {
   final String? jsonData;
 
   String get id => "$contract#$symbol";
-  ImageProvider<Object> get backgroundImage {
+  ImageProvider get backgroundImage {
     return
       backgroundImageUrl.startsWith("assets") ?
-      AssetImage(backgroundImageUrl) as ImageProvider<Object> :
+      AssetImage(backgroundImageUrl) as ImageProvider :
       NetworkImage(backgroundImageUrl);
   }
-  ImageProvider<Object> get logo {
+  ImageProvider get logo {
     return
       logoUrl.startsWith("assets") ?
-      AssetImage(logoUrl)  as ImageProvider<Object>:
+      AssetImage(logoUrl) as ImageProvider :
       NetworkImage(logoUrl);
   }
 
@@ -94,9 +94,10 @@ const seedsToken = TokenModel(
   name: "Seeds",
   backgroundImageUrl: 'assets/images/wallet/currency_info_cards/seeds/background.jpg',
   logoUrl: 'assets/images/wallet/currency_info_cards/seeds/logo.jpg',
-  balanceSubTitle: 'Wallet Balance',
+  balanceSubTitle: 'Balance',
 );
 
+/*
 const husdToken = TokenModel(
   chainName: "Telos",
   contract: "husd.hypha",
@@ -148,3 +149,4 @@ const telosToken = TokenModel(
   logoUrl: 'assets/images/wallet/currency_info_cards/tlos/logo.png',
   balanceSubTitle: 'Wallet Balance',
 );
+*/
