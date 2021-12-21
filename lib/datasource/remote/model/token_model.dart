@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:seeds/datasource/remote/api/tokenmodels_repository.dart';
 
 class TokenModel extends Equatable {
@@ -10,21 +12,33 @@ class TokenModel extends Equatable {
   final String contract;
   final String symbol;
   final String name;
-  final String backgroundImage;
-  final String logo;
+  final String backgroundImageUrl;
+  final String logoUrl;
   final String balanceSubTitle;
   final int precision;
   final String? jsonData;
 
   String get id => "$contract#$symbol";
+  ImageProvider<Object> get backgroundImage {
+    return
+      backgroundImageUrl.startsWith("assets") ?
+      AssetImage(backgroundImageUrl) as ImageProvider<Object> :
+      NetworkImage(backgroundImageUrl);
+  }
+  ImageProvider<Object> get logo {
+    return
+      logoUrl.startsWith("assets") ?
+      AssetImage(logoUrl)  as ImageProvider<Object>:
+      NetworkImage(logoUrl);
+  }
 
   const TokenModel({
     required this.chainName,
     required this.contract,
     required this.symbol,
     required this.name,
-    required this.backgroundImage,
-    required this.logo,
+    required this.backgroundImageUrl,
+    required this.logoUrl,
     required this.balanceSubTitle,
     this.precision = 4,
     this.jsonData = "",
@@ -38,8 +52,8 @@ class TokenModel extends Equatable {
           contract: data["contract"],
           symbol: data["symbolcode"],
           name: parsedJson["name"]!,
-          backgroundImage: parsedJson["backgdimage"]!,
-          logo: parsedJson["logo"]!,
+          backgroundImageUrl: parsedJson["backgdimage"]!,
+          logoUrl: parsedJson["logo"]!,
           balanceSubTitle: parsedJson["balancesubt"]!,
           precision: parsedJson["precision"]!,
           jsonData: data["json"]
@@ -78,8 +92,8 @@ const seedsToken = TokenModel(
   contract: "token.seeds",
   symbol: "SEEDS",
   name: "Seeds",
-  backgroundImage: 'assets/images/wallet/currency_info_cards/seeds/background.jpg',
-  logo: 'assets/images/wallet/currency_info_cards/seeds/logo.jpg',
+  backgroundImageUrl: 'assets/images/wallet/currency_info_cards/seeds/background.jpg',
+  logoUrl: 'assets/images/wallet/currency_info_cards/seeds/logo.jpg',
   balanceSubTitle: 'Wallet Balance',
 );
 
@@ -88,8 +102,8 @@ const husdToken = TokenModel(
   contract: "husd.hypha",
   symbol: "HUSD",
   name: "HUSD",
-  backgroundImage: 'assets/images/wallet/currency_info_cards/husd/background.jpg',
-  logo: 'assets/images/wallet/currency_info_cards/husd/logo.jpg',
+  backgroundImageUrl: 'assets/images/wallet/currency_info_cards/husd/background.jpg',
+  logoUrl: 'assets/images/wallet/currency_info_cards/husd/logo.jpg',
   balanceSubTitle: 'Wallet Balance',
   precision: 2,
 );
@@ -99,8 +113,8 @@ const hyphaToken = TokenModel(
   contract: "token.hypha",
   symbol: "HYPHA",
   name: "Hypha",
-  backgroundImage: 'assets/images/wallet/currency_info_cards/hypha/background.jpg',
-  logo: 'assets/images/wallet/currency_info_cards/hypha/logo.jpg',
+  backgroundImageUrl: 'assets/images/wallet/currency_info_cards/hypha/background.jpg',
+  logoUrl: 'assets/images/wallet/currency_info_cards/hypha/logo.jpg',
   balanceSubTitle: 'Wallet Balance',
   precision: 2,
 );
@@ -110,8 +124,8 @@ const localScaleToken = TokenModel(
   contract: "token.local",
   symbol: "LSCL",
   name: "LocalScale",
-  backgroundImage: 'assets/images/wallet/currency_info_cards/lscl/background.jpg',
-  logo: 'assets/images/wallet/currency_info_cards/lscl/logo.png',
+  backgroundImageUrl: 'assets/images/wallet/currency_info_cards/lscl/background.jpg',
+  logoUrl: 'assets/images/wallet/currency_info_cards/lscl/logo.png',
   balanceSubTitle: 'Wallet Balance',
 );
 
@@ -120,8 +134,8 @@ const starsToken = TokenModel(
   contract: "star.seeds",
   symbol: "STARS",
   name: "Stars",
-  backgroundImage: 'assets/images/wallet/currency_info_cards/stars/background.jpg',
-  logo: 'assets/images/wallet/currency_info_cards/stars/logo.jpg',
+  backgroundImageUrl: 'assets/images/wallet/currency_info_cards/stars/background.jpg',
+  logoUrl: 'assets/images/wallet/currency_info_cards/stars/logo.jpg',
   balanceSubTitle: 'Wallet Balance',
 );
 
@@ -130,7 +144,7 @@ const telosToken = TokenModel(
   contract: "eosio.token",
   symbol: "TLOS",
   name: "Telos",
-  backgroundImage: 'assets/images/wallet/currency_info_cards/tlos/background.png',
-  logo: 'assets/images/wallet/currency_info_cards/tlos/logo.png',
+  backgroundImageUrl: 'assets/images/wallet/currency_info_cards/tlos/background.png',
+  logoUrl: 'assets/images/wallet/currency_info_cards/tlos/logo.png',
   balanceSubTitle: 'Wallet Balance',
 );
