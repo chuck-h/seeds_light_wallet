@@ -14,7 +14,7 @@ class TokenModel extends Equatable {
   final String logo;
   final String balanceSubTitle;
   final int precision;
-  final String jsonData;
+  final String? jsonData;
 
   String get id => "$contract#$symbol";
 
@@ -37,11 +37,11 @@ class TokenModel extends Equatable {
           chainName: data["chainName"],
           contract: data["contract"],
           symbol: data["symbolcode"],
-          name: parsedJson["name"] ?? "NONAME",
-          backgroundImage: parsedJson["backgroundImage"] ?? "NOBACKGROUND",
-          logo: parsedJson["logo"] ?? "NOLOGO",
-          balanceSubTitle: parsedJson["balanceSubTitle"] ?? "NOSUBTITLE",
-          precision: parsedJson["precision"] ?? -1,
+          name: parsedJson["name"]!,
+          backgroundImage: parsedJson["backgdimage"]!,
+          logo: parsedJson["logo"]!,
+          balanceSubTitle: parsedJson["balancesubt"]!,
+          precision: parsedJson["precision"]!,
           jsonData: data["json"]
       );
     }
@@ -62,12 +62,12 @@ class TokenModel extends Equatable {
     return "${quantity.toStringAsFixed(precision)} $symbol";
   }
 
-  static Future<void> initialise() async {
-    await TokenModelsRepository().getTokenModels("lightwallet").then((models){
+  static Future<void> updateModels(String tokenModelUseCase) async {
+    await TokenModelsRepository().getTokenModels(tokenModelUseCase).then((models){
       if(models.isValue) {
         allTokens.addAll(models.asValue!.value);
-      } else {
-        // handle errors, how?
+      } else if(models.isError) {
+        print('Error updating Token Models from chain');
       }
     });
   }

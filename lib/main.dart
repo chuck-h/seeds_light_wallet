@@ -35,7 +35,7 @@ Future<void> main(List<String> args) async {
   await settingsStorage.initialise();
   await PushNotificationService().initialise();
   await remoteConfigurations.initialise();
-  await TokenModel.initialise();
+  await TokenModel.updateModels("lightwallet");
   if (!kReleaseMode) {
     Bloc.observer = DebugBlocObserver();
   }
