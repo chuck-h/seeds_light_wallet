@@ -9,9 +9,10 @@ abstract class ImportKeyEvent extends Equatable {
 
 class FindAccountByKey extends ImportKeyEvent {
   final String privateKey;
+  final String? alternatePrivateKey;
   final List<String> words;
 
-  const FindAccountByKey({required this.privateKey, required this.words});
+  const FindAccountByKey({required this.privateKey, this.alternatePrivateKey, required this.words});
 
   @override
   String toString() => 'FindAccountByKey';
@@ -50,4 +51,11 @@ class FindAccountFromWords extends ImportKeyEvent {
 
   @override
   String toString() => 'FindAccountFromWords ';
+}
+
+class OnUserPastedWords extends ImportKeyEvent {
+  const OnUserPastedWords();
+
+  @override
+  String toString() => 'OnUserPastedWords ';
 }

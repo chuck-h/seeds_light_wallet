@@ -4,7 +4,7 @@ abstract class ExploreEvent extends Equatable {
   const ExploreEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class OnExploreCardTapped extends ExploreEvent {
@@ -14,6 +14,27 @@ class OnExploreCardTapped extends ExploreEvent {
 
   @override
   String toString() => 'OnExploreCardTapped { route: $route }';
+}
+
+class OnBuySeedsCardTapped extends ExploreEvent {
+  const OnBuySeedsCardTapped();
+
+  @override
+  String toString() => 'OnBuySeedsCardTapped';
+}
+
+class OnFlagUserTapped extends ExploreEvent {
+  const OnFlagUserTapped();
+
+  @override
+  String toString() => 'OnFlagUserTapped';
+}
+
+class OnRegionsTapped extends ExploreEvent {
+  const OnRegionsTapped();
+
+  @override
+  String toString() => 'OnRegionsTapped';
 }
 
 class ClearExplorePageCommand extends ExploreEvent {

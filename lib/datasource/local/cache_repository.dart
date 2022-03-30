@@ -6,13 +6,16 @@ import 'package:seeds/datasource/remote/model/vote_model.dart';
 
 const String _proposalVotesBox = 'proposalVotesBox';
 const String _referendumsVotesBox = 'referendumsVotesBox';
-const String _membersBox = 'membersBox1';
+const String _membersBox = 'membersBox001';
 
 // Cache Repo
 class CacheRepository {
   const CacheRepository();
 
   bool _boxIsClosed(Box box) => !box.isOpen;
+
+  /// Deletes all currently open boxes from disk.
+  Future<void> clear() => Hive.deleteFromDisk();
 
   Future<MemberModelCacheItem?> getMemberCacheItem(String account) async {
     final box = await Hive.openBox<MemberModelCacheItem>(_membersBox);

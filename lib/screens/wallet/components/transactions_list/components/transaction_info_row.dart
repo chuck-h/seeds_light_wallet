@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:seeds/components/profile_avatar.dart';
-import 'package:seeds/constants/app_colors.dart';
+import 'package:seeds/design/app_colors.dart';
 import 'package:seeds/design/app_theme.dart';
 import 'package:seeds/screens/wallet/interactor/viewmodels/member_bloc.dart';
 import 'package:seeds/utils/read_times_tamp.dart';
@@ -40,7 +40,7 @@ class TransactionInfoRow extends StatelessWidget {
                     ProfileAvatar(
                       size: 60,
                       account: profileAccount,
-                      nickname: state.displayName,
+                      nickname: state.localizedDisplayName(context),
                       image: state.profileImageURL,
                       decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.lightGreen2),
                     ),
@@ -54,7 +54,7 @@ class TransactionInfoRow extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    state.displayName,
+                                    state.localizedDisplayName(context),
                                     style: Theme.of(context).textTheme.button,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,

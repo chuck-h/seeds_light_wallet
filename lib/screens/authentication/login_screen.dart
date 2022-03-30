@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:seeds/components/flat_button_long.dart';
@@ -7,12 +6,11 @@ import 'package:seeds/components/flat_button_long_outlined.dart';
 import 'package:seeds/datasource/local/settings_storage.dart';
 import 'package:seeds/datasource/remote/firebase/firebase_remote_config.dart';
 import 'package:seeds/design/app_theme.dart';
-import 'package:seeds/i18n/authentication/login.i18n.dart';
 import 'package:seeds/navigation/navigation_service.dart';
+import 'package:seeds/utils/build_context_extension.dart';
 
 const int _approxWidgetHeight = 450;
 
-/// Login SCREEN
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -29,15 +27,16 @@ class LoginScreen extends StatelessWidget {
             if (settingsStorage.inRecoveryMode) {
               NavigationService.of(context).navigateTo(Routes.recoverAccountFound, settingsStorage.accountName);
             } else {
-              NavigationService.of(context).navigateTo(Routes.recoverAccount);
+              NavigationService.of(context).navigateTo(Routes.recoverAccountSearch);
             }
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Lost your key?".i18n, style: Theme.of(context).textTheme.subtitle2),
-              Text(" Recover ".i18n, style: Theme.of(context).textTheme.subtitle2HighEmphasisGreen1),
-              Text("your account here".i18n, style: Theme.of(context).textTheme.subtitle2),
+              Text(context.loc.loginRecoverAccountActionSegment1, style: Theme.of(context).textTheme.subtitle2),
+              Text(context.loc.loginRecoverAccountActionLink,
+                  style: Theme.of(context).textTheme.subtitle2HighEmphasisGreen1),
+              Text(context.loc.loginRecoverAccountActionSegment2, style: Theme.of(context).textTheme.subtitle2),
             ],
           ),
         ),
@@ -60,14 +59,14 @@ class LoginScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("First time here?".i18n, style: Theme.of(context).textTheme.subtitle2),
+                    Text(context.loc.loginFirstTimeHere, style: Theme.of(context).textTheme.subtitle2),
                     const SizedBox(height: 10),
                     FlatButtonLong(
                       onPressed: () => NavigationService.of(context).navigateTo(Routes.signup),
-                      title: "Claim invite code".i18n,
+                      title: context.loc.loginClaimInviteCodeButtonTitle,
                     ),
                     const SizedBox(height: 40),
-                    Text("Already have a Seeds Account?".i18n, style: Theme.of(context).textTheme.subtitle2),
+                    Text(context.loc.loginAlreadyHaveAnAccount, style: Theme.of(context).textTheme.subtitle2),
                     const SizedBox(height: 10),
                     FlatButtonLongOutlined(
                       onPressed: () {
@@ -79,7 +78,7 @@ class LoginScreen extends StatelessWidget {
                           NavigationService.of(context).navigateTo(Routes.importKey);
                         }
                       },
-                      title: "Import Account".i18n,
+                      title: context.loc.loginImportAccountButtonTitle,
                     )
                   ],
                 ),

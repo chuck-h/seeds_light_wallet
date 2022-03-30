@@ -23,8 +23,11 @@ const String _kInRecoveryMode = 'in_recovery_mode';
 const String _kRecoveryLink = 'recovery_link';
 const String _kTokensWhiteList = 'tokens_whitelist';
 const String _kIsCitizen = 'is_citizen';
+const String _kIsVisitor = 'is_visitor';
 const String _kIsFirstRun = 'is_first_run';
 const String _kIsFirstTimeOnDelegateScreen = 'is_first_time_on_delegate_screen';
+const String _kDateSinceRateAppPrompted = 'date_since_rate_app_prompted';
+const String _kIsFirstTimeOnRegionsScreen = 'IsFirstTimeOnRegionsScreen';
 
 class _SettingsStorage {
   late SharedPreferences _preferences;
@@ -73,9 +76,15 @@ class _SettingsStorage {
 
   bool get isCitizen => _preferences.getBool(_kIsCitizen) ?? false;
 
+  bool get isVisitor => _preferences.getBool(_kIsVisitor) ?? false;
+
   bool get isFirstTimeOnDelegateScreen => _preferences.getBool(_kIsFirstTimeOnDelegateScreen) ?? false;
 
+  bool get isFirstTimeOnRegionsScreen => _preferences.getBool(_kIsFirstTimeOnRegionsScreen) ?? true;
+
   List<String> get recoveryWords => _recoveryWords;
+
+  int? get dateSinceRateAppPrompted => _preferences.getInt(_kDateSinceRateAppPrompted);
 
   set inRecoveryMode(bool value) => _preferences.setBool(_kInRecoveryMode, value);
 
@@ -143,8 +152,24 @@ class _SettingsStorage {
     }
   }
 
+  set isVisitor(bool? value) {
+    if (value != null) {
+      _preferences.setBool(_kIsVisitor, value);
+    }
+  }
+
   set isFirstTimeOnDelegateScreen(bool value) {
     _preferences.setBool(_kIsFirstTimeOnDelegateScreen, value);
+  }
+
+  set isFirstTimeOnRegionsScreen(bool value) {
+    _preferences.setBool(_kIsFirstTimeOnRegionsScreen, value);
+  }
+
+  set dateSinceRateAppPrompted(int? value) {
+    if (value != null) {
+      _preferences.setInt(_kDateSinceRateAppPrompted, value);
+    }
   }
 
   Future<void> initialise() async {
@@ -283,6 +308,7 @@ class _SettingsStorage {
       _preferences.remove(_kSelectedToken),
       _preferences.remove(_kTokensWhiteList),
       _preferences.remove(_kIsCitizen),
+      _preferences.remove(_kIsVisitor),
       _preferences.remove(_kIsFirstTimeOnDelegateScreen),
     ]);
   }
@@ -297,7 +323,13 @@ class _SettingsStorage {
   void saveIsCitizen(bool value) => isCitizen = value;
 
   // ignore: use_setters_to_change_properties
+  void saveIsVisitor(bool value) => isVisitor = value;
+
+  // ignore: use_setters_to_change_properties
   void saveFirstTimeOnDelegateScreen(bool value) => isFirstTimeOnDelegateScreen = value;
+
+  // ignore: use_setters_to_change_properties
+  void saveDateSinceRateAppPrompted(int value) => dateSinceRateAppPrompted = value;
 
   Future<void> removeAccount() async {
     await _preferences.clear();
