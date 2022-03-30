@@ -7,19 +7,19 @@ import 'package:seeds/components/divider_jungle.dart';
 import 'package:seeds/components/flat_button_long.dart';
 import 'package:seeds/components/full_page_error_indicator.dart';
 import 'package:seeds/components/full_page_loading_indicator.dart';
-import 'package:seeds/components/snack_bar_info.dart';
 import 'package:seeds/datasource/local/models/token_data_model.dart';
+import 'package:seeds/domain-shared/event_bus/event_bus.dart';
+import 'package:seeds/domain-shared/event_bus/events.dart';
 import 'package:seeds/domain-shared/page_command.dart';
 import 'package:seeds/domain-shared/page_state.dart';
 import 'package:seeds/domain-shared/ui_constants.dart';
 import 'package:seeds/screens/explore_screens/unplant_seeds/components/claim_seeds_succes_dialog.dart';
-import 'components/claim_unplant_seeds_balance_row.dart';
-import 'components/unplant_seeds_amount_entry.dart';
-import 'components/unplant_seeds_success_dialog.dart';
-import 'interactor/viewmodels/unplant_seeds_bloc.dart';
-import 'interactor/viewmodels/unplant_seeds_page_commands.dart';
+import 'package:seeds/screens/explore_screens/unplant_seeds/components/claim_unplant_seeds_balance_row.dart';
+import 'package:seeds/screens/explore_screens/unplant_seeds/components/unplant_seeds_amount_entry.dart';
+import 'package:seeds/screens/explore_screens/unplant_seeds/components/unplant_seeds_success_dialog.dart';
+import 'package:seeds/screens/explore_screens/unplant_seeds/interactor/viewmodels/unplant_seeds_bloc.dart';
+import 'package:seeds/screens/explore_screens/unplant_seeds/interactor/viewmodels/unplant_seeds_page_commands.dart';
 
-/// UNPLANT SEEDS SCREEN
 class UnplantSeedsScreen extends StatefulWidget {
   const UnplantSeedsScreen({Key? key}) : super(key: key);
 
@@ -74,7 +74,7 @@ class _UnplantSeedsScreenState extends State<UnplantSeedsScreen> {
                 },
               );
             } else if (pageCommand is ShowErrorMessage) {
-              SnackBarInfo(pageCommand.message, ScaffoldMessenger.of(context)).show();
+              eventBus.fire(ShowSnackBar(pageCommand.message));
             } else if (pageCommand is UpdateTextController) {
               _amountController = TextEditingController.fromValue(pageCommand.textEditingValue);
             }
@@ -87,11 +87,11 @@ class _UnplantSeedsScreenState extends State<UnplantSeedsScreen> {
                 return const FullPageErrorIndicator();
               case PageState.success:
                 return SafeArea(
+                  minimum: const EdgeInsets.all(horizontalEdgePadding),
                   child: Stack(
                     children: [
                       SingleChildScrollView(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: horizontalEdgePadding),
                           height: MediaQuery.of(context).size.height - Scaffold.of(context).appBarMaxHeight!,
                           child: Column(
                             children: [
@@ -135,16 +135,13 @@ class _UnplantSeedsScreenState extends State<UnplantSeedsScreen> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(horizontalEdgePadding),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: FlatButtonLong(
-                            title: 'Unplant Seeds',
-                            enabled: state.isUnplantSeedsButtonEnabled,
-                            onPressed: () =>
-                                BlocProvider.of<UnplantSeedsBloc>(context).add(const OnUnplantSeedsButtonTapped()),
-                          ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: FlatButtonLong(
+                          title: 'Unplant Seeds',
+                          enabled: state.isUnplantSeedsButtonEnabled,
+                          onPressed: () =>
+                              BlocProvider.of<UnplantSeedsBloc>(context).add(const OnUnplantSeedsButtonTapped()),
                         ),
                       ),
                     ],

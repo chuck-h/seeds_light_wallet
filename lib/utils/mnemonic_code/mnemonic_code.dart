@@ -4,14 +4,11 @@ import 'dart:typed_data';
 
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart' show sha256;
-
-import 'hex.dart';
-import 'words_list.dart';
+import 'package:seeds/utils/mnemonic_code/hex.dart';
+import 'package:seeds/utils/mnemonic_code/words_list.dart';
 
 /// Taken from Bip39 package
 const int _sizeByte = 255;
-const _invalidChecksum = 'Invalid mnemonic checksum';
-const _invalidMnemonic = 'Invalid mnemonic';
 const _invalidEntropy = 'Invalid entropy';
 
 typedef RandomBytes = Uint8List Function(int size);
@@ -45,11 +42,11 @@ Uint8List randomBytes(int size) {
 String generateMnemonic({int strength = 48, RandomBytes randomBytes = randomBytes}) {
   assert(strength % 16 == 0);
   final Uint8List entropy = randomBytes(strength ~/ 8);
-  return entropyToMnemonic(HEX.encode(entropy));
+  return entropyToMnemonic(hexCodec.encode(entropy));
 }
 
 String entropyToMnemonic(String entropyString) {
-  final entropy = Uint8List.fromList(HEX.decode(entropyString));
+  final entropy = Uint8List.fromList(hexCodec.decode(entropyString));
   if (entropy.length < 2) {
     throw ArgumentError("$_invalidEntropy length is ${entropy.length}");
   }
@@ -70,52 +67,20 @@ String entropyToMnemonic(String entropyString) {
   return words;
 }
 
+bool _isSha256Hash(String s) {
+  return s.length == 64 && BigInt.tryParse(s, radix: 16) != null;
+}
+
 String secretFromMnemonic(String mnemonic) {
+  /// mnemonic is either a 12 word string, or it is a hex string that is
+  /// already the secret. If it is a hex string, we assume it is a secret and
+  /// just return it.
+  if (_isSha256Hash(mnemonic)) {
+    return mnemonic;
+  }
   return sha256.convert(utf8.encode(mnemonic)).toString();
 }
 
 String hashFromSecret(String secret) {
   return sha256.convert(hex.decode(secret)).toString();
-}
-
-String mnemonicToEntropy(List<String> recoveryPhrase) {
-  print(recoveryPhrase);
-  if (recoveryPhrase.length % 3 != 0) {
-    throw ArgumentError(_invalidMnemonic);
-  }
-  final wordlist = wordList;
-  // convert word indices to 11 bit binary strings
-  final bits = recoveryPhrase.map((word) {
-    final index = wordlist.indexOf(word);
-    if (index == -1) {
-      throw ArgumentError(_invalidMnemonic);
-    }
-    return index.toRadixString(2).padLeft(11, '0');
-  }).join();
-  // split the binary string into ENT/CS
-  final dividerIndex = (bits.length / 33).floor() * 32;
-  final entropyBits = bits.substring(0, dividerIndex);
-  final checksumBits = bits.substring(dividerIndex);
-
-  // calculate the checksum and compare
-  // ignore: unnecessary_raw_strings
-  final regex = RegExp(r".{1,8}");
-  final entropyBytes = Uint8List.fromList(
-      regex.allMatches(entropyBits).map((match) => _binaryToByte(match.group(0)!)).toList(growable: false));
-  if (entropyBytes.length < 16) {
-    throw StateError(_invalidEntropy);
-  }
-  if (entropyBytes.length > 32) {
-    throw StateError(_invalidEntropy);
-  }
-  if (entropyBytes.length % 4 != 0) {
-    throw StateError(_invalidEntropy);
-  }
-  final newChecksum = _deriveChecksumBits(entropyBytes);
-  if (newChecksum != checksumBits) {
-    throw StateError(_invalidChecksum);
-  }
-  return entropyBytes.map((byte) {
-    return byte.toRadixString(16).padLeft(2, '0');
-  }).join();
 }

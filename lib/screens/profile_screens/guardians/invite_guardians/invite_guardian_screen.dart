@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:seeds/components/flat_button_long.dart';
 import 'package:seeds/components/search_result_row.dart';
-import 'package:seeds/components/snack_bar_info.dart';
-import 'package:seeds/datasource/remote/model/member_model.dart';
+import 'package:seeds/datasource/remote/model/profile_model.dart';
 import 'package:seeds/design/app_theme.dart';
+import 'package:seeds/domain-shared/event_bus/event_bus.dart';
+import 'package:seeds/domain-shared/event_bus/events.dart';
 import 'package:seeds/domain-shared/page_command.dart';
+import 'package:seeds/domain-shared/ui_constants.dart';
 import 'package:seeds/i18n/profile_screens/guardians/guardians.i18n.dart';
 import 'package:seeds/navigation/navigation_service.dart';
 import 'package:seeds/screens/profile_screens/guardians/invite_guardians/interactor/viewmodels/invite_guardians_bloc.dart';
@@ -15,7 +17,7 @@ class InviteGuardians extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final myGuardians = ModalRoute.of(context)?.settings.arguments as Set<MemberModel>?;
+    final myGuardians = ModalRoute.of(context)?.settings.arguments as Set<ProfileModel>?;
 
     return BlocProvider(
       create: (_) => InviteGuardiansBloc(myGuardians ?? {}),
@@ -28,7 +30,7 @@ class InviteGuardians extends StatelessWidget {
           if (pageCommand is NavigateToRoute) {
             NavigationService.of(context).navigateTo(pageCommand.route);
           } else if (pageCommand is ShowErrorMessage) {
-            SnackBarInfo(pageCommand.message, ScaffoldMessenger.of(context)).show();
+            eventBus.fire(ShowSnackBar(pageCommand.message));
           }
         },
         child: BlocBuilder<InviteGuardiansBloc, InviteGuardiansState>(
@@ -36,6 +38,7 @@ class InviteGuardians extends StatelessWidget {
             return Scaffold(
               appBar: AppBar(title: Text("Invite Guardians".i18n)),
               body: SafeArea(
+                minimum: const EdgeInsets.symmetric(vertical: 16),
                 child: Column(
                   children: [
                     const SizedBox(height: 24),
@@ -58,7 +61,7 @@ class InviteGuardians extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(horizontal: horizontalEdgePadding),
                       child: FlatButtonLong(
                         title: 'Send Invite'.i18n,
                         onPressed: () {

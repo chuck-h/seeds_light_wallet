@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:i18n_extension/i18n_widget.dart';
 import 'package:seeds/blocs/authentication/viewmodels/authentication_bloc.dart';
 import 'package:seeds/blocs/deeplink/viewmodels/deeplink_bloc.dart';
 import 'package:seeds/blocs/rates/viewmodels/rates_bloc.dart';
+import 'package:seeds/blocs/root/root_bloc.dart';
+import 'package:seeds/components/snack.dart';
 import 'package:seeds/design/app_theme.dart';
+import 'package:seeds/domain-shared/event_bus/events.dart';
 import 'package:seeds/navigation/navigation_service.dart';
 
 class SeedsApp extends StatelessWidget {
@@ -13,32 +16,42 @@ class SeedsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
     return RepositoryProvider(
       create: (_) => NavigationService(),
       child: MultiBlocProvider(
         providers: [
+          BlocProvider<RootBloc>(create: (_) => RootBloc()),
           BlocProvider<AuthenticationBloc>(create: (_) => AuthenticationBloc()..add(const InitAuthStatus())),
           BlocProvider<RatesBloc>(create: (_) => RatesBloc()),
           BlocProvider<DeeplinkBloc>(create: (_) => DeeplinkBloc()),
         ],
-        child: BlocListener<DeeplinkBloc, DeeplinkState>(
-          listenWhen: (previous, current) => previous.inviteLinkData == null && current.inviteLinkData != null,
-          listener: (context, _) => BlocProvider.of<AuthenticationBloc>(context).add(const OnInviteLinkRecived()),
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<RootBloc, RootState>(
+              listenWhen: (_, current) => current.busEvent != null,
+              listener: (context, state) {
+                final BusEvent busEvent = state.busEvent!;
+                BlocProvider.of<RootBloc>(context).add(const ClearRootBusEvent());
+                if (busEvent is ShowSnackBar) {
+                  final ShowSnackBar event = busEvent;
+                  Snack(event.message, rootScaffoldMessengerKey.currentState, event.snackType).show();
+                }
+              },
+            ),
+            BlocListener<DeeplinkBloc, DeeplinkState>(
+              listenWhen: (previous, current) => previous.inviteLinkData == null && current.inviteLinkData != null,
+              listener: (context, _) => BlocProvider.of<AuthenticationBloc>(context).add(const OnInviteLinkRecived()),
+            )
+          ],
           child: Builder(
             builder: (context) {
               final navigator = NavigationService.of(context);
               return MaterialApp(
-                localizationsDelegates: [
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: [
-                  const Locale('en', 'US'),
-                  const Locale('es', 'ES'),
-                  const Locale('pt', 'BR'),
-                ],
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
                 theme: SeedsAppTheme.darkTheme,
+                scaffoldMessengerKey: rootScaffoldMessengerKey,
                 navigatorKey: navigator.appNavigatorKey,
                 onGenerateRoute: navigator.onGenerateRoute,
                 builder: (_, child) {

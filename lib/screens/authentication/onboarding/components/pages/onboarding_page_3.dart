@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:seeds/constants/app_colors.dart';
-import 'package:seeds/i18n/onboarding/onboarding.i18n.dart';
-
-import '../onboarding_pages.dart';
+import 'package:seeds/design/app_colors.dart';
+import 'package:seeds/screens/authentication/onboarding/components/onboarding_pages.dart';
+import 'package:seeds/utils/build_context_extension.dart';
 
 class ThirdPage extends StatelessWidget {
   const ThirdPage({Key? key}) : super(key: key);
@@ -13,10 +12,8 @@ class ThirdPage extends StatelessWidget {
     return OnboardingPage(
       onboardingImage: "assets/images/onboarding/onboarding3.png",
       topPadding: 50,
-      title: "Regenerative\nEconomy".i18n,
-      subTitle:
-          "Unite with a global movement of\norganizations and people to regenerate our\nplanet and heal our economy."
-              .i18n,
+      title: context.loc.onboardingEconomyTitle,
+      subTitle: context.loc.onboardingEconomySubtitle,
       topLeaf1: Positioned(
         right: -20,
         top: -90,

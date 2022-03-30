@@ -1,9 +1,10 @@
+// ignore_for_file: directives_ordering
+
 import 'dart:async';
 
 import 'package:async/async.dart';
 
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:eosdart/eosdart.dart';
+import 'package:seeds/crypto/eosdart/eosdart.dart';
 import 'package:http/http.dart' as http;
 import 'package:seeds/datasource/remote/api/eos_repo/eos_repository.dart';
 import 'package:seeds/datasource/remote/api/eos_repo/seeds_eos_actions.dart';
@@ -12,7 +13,7 @@ import 'package:seeds/datasource/remote/api/http_repo/seeds_scopes.dart';
 import 'package:seeds/datasource/remote/api/http_repo/seeds_tables.dart';
 import 'package:seeds/datasource/remote/datamappers/toDomainInviteModel.dart';
 import 'package:seeds/datasource/remote/model/invite_model.dart';
-import 'package:seeds/datasource/remote/model/member_model.dart';
+import 'package:seeds/datasource/remote/model/profile_model.dart';
 import 'package:seeds/datasource/remote/model/transaction_response.dart';
 import 'package:seeds/domain-shared/ui_constants.dart';
 
@@ -66,7 +67,7 @@ class InviteRepository extends HttpRepository with EosRepository {
         .catchError((error) => mapEosError(error));
   }
 
-  Future<Result<MemberModel>> getMembers() {
+  Future<Result<ProfileModel>> getMembers() {
     print('[http] get members');
 
     final membersURL = Uri.parse('$baseURL/v1/chain/get_table_rows');
@@ -79,9 +80,9 @@ class InviteRepository extends HttpRepository with EosRepository {
 
     return http
         .post(membersURL, headers: headers, body: request)
-        .then((http.Response response) => mapHttpResponse<MemberModel>(response, (dynamic body) {
+        .then((http.Response response) => mapHttpResponse<ProfileModel>(response, (dynamic body) {
               final List<dynamic> allAccounts = body['rows'].toList();
-              return allAccounts.map((item) => MemberModel.fromJson(item)).toList();
+              return allAccounts.map((item) => ProfileModel.fromJson(item)).toList();
             }))
         .catchError((error) => mapHttpError(error));
   }

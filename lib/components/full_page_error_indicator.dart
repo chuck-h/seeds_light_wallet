@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:seeds/components/flat_button_long.dart';
-import 'package:seeds/constants/app_colors.dart';
-import 'package:seeds/i18n/components/components.i18n.dart';
+import 'package:seeds/design/app_colors.dart';
+import 'package:seeds/domain-shared/global_error.dart';
 
 class FullPageErrorIndicator extends StatelessWidget {
   final String? errorMessage;
@@ -16,14 +16,14 @@ class FullPageErrorIndicator extends StatelessWidget {
       Expanded(
         child: Center(
           child: Text(
-            errorMessage ?? "Oops, Something Went Wrong".i18n,
+            errorMessage ?? GlobalError.unknown.localizedDescription(context),
             style: Theme.of(context).textTheme.subtitle2!.copyWith(color: AppColors.red1),
           ),
         ),
       ),
       if (buttonTitle != null && buttonOnPressed != null)
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
           child: FlatButtonLong(title: buttonTitle!, onPressed: buttonOnPressed),
         ),
     ]);
